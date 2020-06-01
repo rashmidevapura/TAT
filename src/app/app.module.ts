@@ -27,6 +27,7 @@ import { TestConfigEditComponent } from './components/test-config-edit/test-conf
 import { JrssCreateComponent } from './components/jrss-create/jrss-create.component';
 import { StreamCreateComponent } from './components/stream-create/stream-create.component';
 import {UserModule} from './components/view-testresults/user.module';
+import { PreTechFormComponent } from './components/pre-tech-form/pre-tech-form.component';
 
 export let browserRefresh = false;
 
@@ -49,7 +50,8 @@ export let browserRefresh = false;
     TestConfigAddComponent,
     TestConfigEditComponent,
     JrssCreateComponent,
-    StreamCreateComponent],
+    StreamCreateComponent,
+    PreTechFormComponent],
   imports: [
     BrowserModule,
     NgxPaginationModule,

@@ -4,6 +4,11 @@ const quizRoute = express.Router();
 
 // QuestionBank model
 let QuestionBank = require('../models/QuestionBank');
+//Pretechassesmentanswer model
+let PreTechAssessmentAnswer = require('../models/PreTechAssessmentAnswer');
+//PreTechQuestionnaire model
+let PreTechQuestionnaire = require('../models/PreTechQuestionnaire');
+
 
 // Add QuestionBank
 quizRoute.route('/createQuiz').post((req, res, next) => {
@@ -65,6 +70,23 @@ quizRoute.route('/read/:rowNum').get((req, res) => {
   }).skip(Number(req.params.rowNum-1)).limit(1);
   
 })
+
+
+// Get pretechnical questions based on jrss
+quizRoute.route('/getPreTechQuestionanire/:jrss/:userName').get((req, res) => {
+  PreTechQuestionnaire.aggregate([{ $lookup: { from: "PreTechAssessmentAnswer", 
+  let: { qid: "$preTechQID" }, 
+  pipeline: [{ $match: { $expr: { $and: [
+    { $eq: ["$$qid", "$preTechQID"] }, 
+    { $eq: ["$userName", req.params.userName] }] } } }, 
+    { $project: { preTechQID: 1, answer: 1 } }], as: "questions" } }],(error, data) => {
+      if (error) {
+          return next(error)
+        } else {
+          res.json(data)
+        }
+      })
+    })
 
 /**
 // Update QuestionBank

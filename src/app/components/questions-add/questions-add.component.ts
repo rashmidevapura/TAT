@@ -23,7 +23,7 @@ export class QuestionsAddComponent implements OnInit {
   QuestionTypes:any = ['SingleSelect','MultiSelect'];
   answerArray:Array<String>=[];
   optionsArray:Array<Object>=[];
-  questionID:any;
+  questionID:any=0;
   file: File;
   arrayBuffer: any;
   filelist: any;

@@ -10,6 +10,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 export class ApiService {
 
   baseUri:string = 'http://localhost:4000/api';
+  baseQuestionUri:string = 'http://localhost:4000/api/quiz';
   userResultUri:string = 'http://localhost:4000/result';
   baseloginUri:string = 'http://localhost:4000/api/login';
   baseBandUri:string = 'http://localhost:4000/api/band';
@@ -157,9 +158,17 @@ getJRSS() {
 // Get Users table records based on username
 getUserByUserName(id): Observable<any> {
   let url = `${this.baseloginUri}/getUser/${id}`;
+  return this.http.get(url, {headers: this.headers})
+  }
+
+  // Get Users table records based on username
+getPreTechniaclQuestions(jrss,userName): Observable<any> {
+  let url = `${this.baseQuestionUri}/getPreTechQuestionanire/${jrss}/${userName}`;
+  
   return this.http.get(url, {headers: this.headers}).pipe(
-    map((res: Response) => {    
-      return res || {}
+    map((res: Response) => {  
+      console.log('inside api pre tech',res)  
+      return res;
     }),
     catchError(this.errorMgmt)
     )

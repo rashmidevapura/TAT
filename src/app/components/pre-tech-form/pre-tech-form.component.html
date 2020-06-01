@@ -1,0 +1,22 @@
+<div id="quiz">
+    
+    <div oncopy="return false">
+        <font color="black" size="+2">
+        <div class="form-group row" >
+            <div class="col-sm-4"></div>
+        <div class="col-sm-4 col-form-label"><b>Pre Technical Interview Form</b></div></div></font>
+      <div class="form-group row" *ngFor="let question of result" >
+        <div class="col-sm-4"></div>
+        <br/>
+        <label style="width:500px">
+          <!--To display questions as entered with line breaks-->
+          <b> &nbsp;{{question.preTechQuestion}}</b>
+        </label>
+        <input class="form-control" type="text"  size="" value={{question.questions[0].answer}}>
+    
+  </div>
+</div>
+  
+  </div>
+
+  

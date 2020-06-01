@@ -20,6 +20,7 @@ import { DeactivateGuard } from './service/canDeactivate.candCreate';
 import { JrssCreateComponent } from './components/jrss-create/jrss-create.component';
 import { ViewTestresultsComponent } from './components/view-testresults/view-testresults.component';
 import { StreamCreateComponent } from './components/stream-create/stream-create.component';
+import { PreTechFormComponent } from './components/pre-tech-form/pre-tech-form.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login-component' },
@@ -41,6 +42,7 @@ const routes: Routes = [
   { path: 'testconfig-edit/:id', component:TestConfigEditComponent},
   { path: 'jrss-create', component: JrssCreateComponent },
   {path: 'view-testresults', component:ViewTestresultsComponent},
+  {path: 'pre-tech-form', component:PreTechFormComponent},
   { path: 'stream-create', component: StreamCreateComponent }
 ];
 
