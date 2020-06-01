@@ -30,6 +30,7 @@ export class ViewTestresultsListComponent implements OnChanges {
   status = "";
   userName = "";
   candidateDetails: any = [];
+  candidateAssessmentDetails: any = [];
   mode: any;
   constructor(private ref: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private router: Router, private apiService: ApiService) {
     this.config = {
@@ -104,5 +105,20 @@ export class ViewTestresultsListComponent implements OnChanges {
              this.candidateDetails = data;
       })
   }
+
+
+  /**
+   * getCandidateAssessmentDetails.
+   * @author A.George
+   * 29May2020.
+   */
+  getCandidateAssessmentDetails(userid,quizId,username) {
+     this.userName=username;
+     this.quizNumber=quizId;
+     this.mode="displayAssessmentModalBody";
+     this.apiService.getCandidateAssessmentDetails(userid).subscribe((data) => {
+     this.candidateAssessmentDetails = data;
+     })
+ }
 
 }

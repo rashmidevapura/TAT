@@ -183,32 +183,7 @@ export class QuestionsAddBulkComponent implements OnInit {
       this.answerArray=[];  
       this.optionsArray=[];   
       this.validQuestionType=false;
-      
-      //Check if Question is entered and update in the Question Form
-      if(!(jsonQuestionObj[i]["Question"])){
-        console.log("The question is not found in row number "+(i+2));
-        continue;
-      }
-      this.questionForm.value.question=jsonQuestionObj[i]["Question"];
-          
-      //Check if All 4 options  are present
-      if(!(jsonQuestionObj[i]["Option1"] && jsonQuestionObj[i]["Option2"] && jsonQuestionObj[i]["Option3"] && jsonQuestionObj[i]["Option4"])){
-              console.log("All the 4 options should be entered");
-              continue;
-      }
-      this.optionsArray.push({optionID:1,option:jsonQuestionObj[i]["Option1"]},
-      {optionID:2,option:jsonQuestionObj[i]["Option2"]},
-      {optionID:3,option:jsonQuestionObj[i]["Option3"]},
-      {optionID:4,option:jsonQuestionObj[i]["Option4"]});         
-      this.questionForm.value.options=this.optionsArray;
 
-      //Check if Answer ID is updated
-      if(!(jsonQuestionObj[i]["AnswerID"])){  
-          console.log("Answer ID is not populated on row "+(i+2));
-          continue;
-      }   
-      this.questionForm.value.answerID=jsonQuestionObj[i]["AnswerID"];
-            
       //Check Valid QuestionType And update
       for(var j = 0; j<this.QuestionTypes.length; j++){
         if(jsonQuestionObj[i]["QuestionType"] == this.QuestionTypes[j]){
@@ -222,15 +197,89 @@ export class QuestionsAddBulkComponent implements OnInit {
         continue;
       }
       
-               /**for(var j = 0; j<this.questionForm.value.options.length; j++){
-                console.log("Question Form Options Array "+this.questionForm.value.options[j]["optionID"]+" "+this.questionForm.value.options[j]["option"]);
-                }
-                //Validation for singleSelect
-               if((this.questionForm.value.questionType=="SingleSelect")&& (this.answerArray.toString().length)>1){
-                 console.log("only one"+this.questionForm.value.answerID)
-                alert("Only one option can be selected as the questionType is SingleSelect");                
-                return false;
-              }   **/   
+      //Check if Question is entered and update in the Question Form
+      if(!(jsonQuestionObj[i]["Question"])){
+        console.log("The question is not found in row number "+(i+2));
+        continue;
+      }
+      this.questionForm.value.question=jsonQuestionObj[i]["Question"];
+
+      //Check if Answer ID is updated
+      if(!(jsonQuestionObj[i]["AnswerID"])){  
+       console.log("Answer ID is not populated on row "+(i+2));
+       continue;
+     }    
+    let lengthOfString = (<String>jsonQuestionObj[i]["AnswerID"]).length;
+    //Check if AnswerID length and Question Type match
+    if((!lengthOfString) && (jsonQuestionObj[i]["QuestionType"] == "SingleSelect"))
+    {
+      console.log("SingleSelect Answer on row "+(i+2));
+      this.questionForm.value.answerID=jsonQuestionObj[i]["AnswerID"];
+    } 
+    else if( (lengthOfString > 2) && (jsonQuestionObj[i]["QuestionType"]=="MultiSelect"))
+    {
+      console.log("MultiSelect Answer on row "+(i+2));
+      this.questionForm.value.answerID=jsonQuestionObj[i]["AnswerID"];
+    } else {
+      console.log("Mismatch in Answer ID length and Question Type on row "+(i+2));
+      continue;
+    }
+  
+      //First two options are mandatory
+      if(!(jsonQuestionObj[i]["Option1"] && jsonQuestionObj[i]["Option2"])){
+              console.log("First two options are mandatory on row "+(i+2));
+              continue;
+      }
+      else if ((!jsonQuestionObj[i]["Option3"]) && jsonQuestionObj[i]["Option4"])
+      {
+        //Option 3 has to be entered and then option 4
+        console.log("Enter value for Option3 and then for Option4 on row "+(i+2));
+        continue;
+      }
+      if (jsonQuestionObj[i]["QuestionType"] == "SingleSelect"){
+        //Check if option 3/4 exists if Answers ID contains 3/4 values for Single select
+        if ((<String>jsonQuestionObj[i]["AnswerID"]) == "3" && !jsonQuestionObj[i]["Option3"]){
+            console.log("Single Select: Please enter option 3 if answer ID contains 3 on row "+(i+2));
+            continue;
+        }else if ((<String>jsonQuestionObj[i]["AnswerID"]) == "4" && !jsonQuestionObj[i]["Option4"]){
+          console.log("Single Select: Please enter option 4 if answer ID contains 4 on row "+(i+2));
+          continue;
+        }    
+     } else if (jsonQuestionObj[i]["QuestionType"] == "MultiSelect"){
+          let answerIDArray = (<String>jsonQuestionObj[i]["AnswerID"]).split(",");
+          let optionNotPresent:boolean = false;
+          //Check if option 3/4 exists if Answers ID contains 3/4 values for MultiSelect select
+          for( let j = 0; j<answerIDArray.length; j++)
+          {   
+            if (answerIDArray[j] == "3" && !jsonQuestionObj[i]["Option3"]){
+              console.log("Multi Select: Please enter option 3 if answer ID contains 3 on row "+(i+2));
+              optionNotPresent = true;
+            }else if (answerIDArray[j] == "4" && !jsonQuestionObj[i]["Option4"]){
+              console.log("Multi Select: Please enter option 4 if answer ID contains 4 on row "+(i+2));
+              optionNotPresent = true;
+            }
+          }
+          if(optionNotPresent){
+            console.log("Please enter valid Options for the entered AnswerID");
+            continue;
+          }
+     }
+      //Pushing Options to Options Array
+      if (jsonQuestionObj[i]["Option3"] && !jsonQuestionObj[i]["Option4"]){
+          this.optionsArray.push({optionID:1,option:jsonQuestionObj[i]["Option1"]},
+          {optionID:2,option:jsonQuestionObj[i]["Option2"]},
+          {optionID:3,option:jsonQuestionObj[i]["Option3"]});
+      }else if (jsonQuestionObj[i]["Option4"]){
+          this.optionsArray.push({optionID:1,option:jsonQuestionObj[i]["Option1"]},
+          {optionID:2,option:jsonQuestionObj[i]["Option2"]},
+          {optionID:3,option:jsonQuestionObj[i]["Option3"]},
+          {optionID:4,option:jsonQuestionObj[i]["Option4"]});
+      } else {
+          this.optionsArray.push({optionID:1,option:jsonQuestionObj[i]["Option1"]},
+          {optionID:2,option:jsonQuestionObj[i]["Option2"]});
+      }      
+      this.questionForm.value.options=this.optionsArray;
+
     //Update Question ID
     if(!(this.questionID)){
       this.questionID=0;
@@ -242,7 +291,7 @@ export class QuestionsAddBulkComponent implements OnInit {
       (res) => {
         this.bulkUploadQuestions=this.bulkUploadQuestions + 1;
         console.log("Number of Questions uploaded "+this.bulkUploadQuestions);
-        this.formReset = true;
+       this.formReset = true;
         this.questionForm.reset();
       }, (error) => {
         console.log(error);

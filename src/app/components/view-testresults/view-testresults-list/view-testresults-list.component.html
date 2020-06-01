@@ -1,5 +1,5 @@
 <div class="container">
-    <!-- No data message --> 
+    <!-- No data message -->
     <!-- Candidate list -->
     <table class="table table-bordered" *ngIf="Result.length > 0">
       <thead class="table-success">
@@ -15,18 +15,18 @@
       </thead>
       <tbody>
        <tr *ngFor="let result of Result | filter: searchByKeyword: 'name' | paginate: config; let i = index">
-         
+
           <td *ngIf="result.result_users.length > 0">{{this.config.itemsPerPage *(this.config.currentPage-1)+i+1}}</td>
           <td *ngIf="result.result_users.length > 0"><a href="#myModal" (click)="getCandidateDetails(result.userName)" class="col-4 cursor-pointer" data-toggle="modal" >{{result.result_users[0].employeeName}}</a></td>
           <td *ngIf="result.result_users.length  > 0">{{result.userName}}</td>
           <td *ngIf="result.result_users.length  > 0"></td>
           <td *ngIf="result.result_users.length  > 0">{{result.result_users[0].JRSS}}</td>
           <td *ngIf="result.result_users.length  > 0">{{result.quizNumber}}</td>
-          <td *ngIf="result.result_users.length  > 0">{{result.userScore}}%</td>
+          <td *ngIf="result.result_users.length  > 0"><a href="#assessmentModal"  (click)="getCandidateAssessmentDetails(result.userName,result.quizNumber,result.result_users[0].employeeName)" class="col-4 cursor-pointer" data-toggle="modal" >{{result.userScore}}%</a></td>
         </tr>
         </tbody>
       </table>
-       <pagination-controls (pageChange)="pageChange($event)" class="my-pagination"></pagination-controls> 
+       <pagination-controls (pageChange)="pageChange($event)" class="my-pagination"></pagination-controls>
   </div>
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
@@ -85,3 +85,71 @@
 
   </div>
 </div>
+
+
+
+<!-- Below Candidate Assessment Details added by A.George on 29May2020.-->
+
+<!-- Modal Code starts. -->
+<div id="assessmentModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content" *ngFor="let assessmentDetails of this.candidateAssessmentDetails.results">
+      <div *ngIf="assessmentDetails.quizNumber == this.quizNumber">
+      <div class="modal-header table-success">
+        <h4 class="modal-title">Candidate Assessment Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" *ngIf="mode=='displayAssessmentModalBody'">
+        <table style="table-layout: fixed; width: 100%;color:grey">
+          <thead>
+          <tr>
+            <td scope="col" width="10%">{{this.userName}}'s answers</td>
+            <td scope="col" width="10%">Attempt No : {{assessmentDetails.quizNumber}}</td>
+            <td scope="col" width="10%"> Date : {{ assessmentDetails.createdDate.substring(0,10) }}</td>
+            <td scope="col" width="10%"> Score : {{ assessmentDetails.userScore }}%</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td colspan="4" scope="col" style="font-size:x-small;color:black;font-style: italic;">You have answered {{(assessmentDetails.userScore * assessmentDetails.userAnswer.length)/100}} questions out of {{assessmentDetails.userAnswer.length}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngFor="let answer of assessmentDetails.userAnswer;let i=index">
+        <div *ngFor="let questions of answer.userAttemptedQuestion" >
+          <table border="0"  style="table-layout: fixed; width: 100%;color:gray">
+            <tbody>
+              <tr>
+                <td width="2%">
+                  <div  *ngIf="answer.userAnswerID==questions.answerID">
+                    <img src="assets/images/success.jpg" width="20" height="20"/>
+                  </div>
+                  <div  *ngIf="answer.userAnswerID!= questions.answerID">
+                    <img src="assets/images/failure.jpg" width="20" height="20"/>
+                  </div>
+                </td><td><b>{{i+1}}){{questions.question}}?</b></td>
+              </tr>
+              <tr></tr>
+              <tr  *ngFor="let questionOption of questions.options;let k=index">
+                <td  width="2%"></td>
+                <td>{{k+1}}){{questionOption.option}} </td>
+              </tr>
+              <tr><td  width="2%"></td>
+                <td style="color:black"><pre>Candidate Answer: {{answer.userAnswerID}}    Correct Answer:  {{questions.answerID}}
+                  </pre> </td></tr>
+              <tr></tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer table-success">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+<!-- Code Ends.-->
